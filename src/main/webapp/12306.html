@@ -14,26 +14,39 @@
 </style>
 <script>
     window.onload=function(){
-        document.getElementById("search").onmousedown=function(){ 
+        document.getElementById("search").onclick=function(){
+
             request=new XMLHttpRequest();//Ajax发送请求
-            request.onreadystatechange=callBack;//callBack：回调函数
-            request.open("GET","https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date=2023-05-09&leftTicketDTO.from_station=GLZ&leftTicketDTO.to_station=GZQ&purpose_codes=ADULT")
+            request.onreadystatechange=collBock;//callBack：回调函数
+            fromStation = document.getElementById("fromStation").value;
+            toStation = document.getElementById("toStation").value;
+            departureTime = document.getElementById("departureTime").value;
+            request.open("GET","/searchTicket?fromStation="+fromStation+"&toStation="+toStation+"&departureTime="+departureTime);
             request.send(null);//跨域：跨域名
         } 
-        function callBack(){
-            console.log("回调处理")
+        function collBock(){
+            /*
+            回调函数：服务器响应成功后，利用回调函数拿到服务器返回的数据
+            */
+            if (request.readyState==4){
+                //请求完成，0~4
+                if (request.status==200){
+                    //响应
+                    console.log("服务器返回的车次信息",request.responseText);
+                }
+            }
         }
     }
  
 </script>
 <body>
 
-<form action="/searchTicket" method="get">
-    <label for="startStation">起始站：</label>  <input id="startStation" type="text" name="startStation">
-    <label for="endStation">终点站：</label>  <input id="endStation" type="text" name="endStation">
-    <label for="departureDate">出发日期：</label>  <input id="departureDate" type="date" name="departureDate">
-    <button class="search" type="submit">查询</button>
-</form>
+
+    <label for="fromStation">起始站：</label>  <input id="fromStation" type="text" name="fromStation">
+    <label for="toStation">终点站：</label>  <input id="toStation" type="text" name="toStation">
+    <label for="departureTime">出发日期：</label>  <input id="departureTime" type="date" name="departureTime">
+    <button id="search" >查询</button>
+
     <table>
         <tr>
             <th>车次</th>
